@@ -7,14 +7,15 @@ import android.content.Intent;
 public class PackageInstallReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-        if (intent.getAction().equals("android.intent.action.PACKAGE_ADDED") ||
-                intent.getAction().equals("android.intent.action.PACKAGE_REPLACED")) {
+        String action = intent.getAction();
+        if ("android.intent.action.PACKAGE_ADDED".equals(action) ||
+                "android.intent.action.PACKAGE_REPLACED".equals(action)) {
             String packageName = intent.getData().getSchemeSpecificPart();
             String apkPath = getApkPath(context, packageName);
             if (apkPath != null) {
                 Intent serviceIntent = new Intent(context, VSecurityService.class);
                 serviceIntent.putExtra("apk_path", apkPath);
-                context.startService(serviceIntent);
+                context.startForegroundService(serviceIntent); // Use foreground service
             }
         }
     }
